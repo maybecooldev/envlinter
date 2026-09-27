@@ -5,7 +5,7 @@ from envlinter import dotenv
 
 def write(tmp_path, text, name=".env"):
     path = tmp_path / name
-    path.write_text(text, encoding="utf-8")
+    path.write_text(text, encoding="utf-8", newline="")
     return str(path)
 
 

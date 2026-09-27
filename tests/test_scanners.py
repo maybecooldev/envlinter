@@ -69,17 +69,17 @@ class TestNoise:
 class TestTreeWalking:
     def test_skips_vendor_directories(self, tmp_path):
         (tmp_path / "node_modules").mkdir()
-        (tmp_path / "node_modules" / "dep.ts").write_text("process.env.FROM_DEP")
-        (tmp_path / "app.ts").write_text("process.env.FROM_APP")
+        (tmp_path / "node_modules" / "dep.ts").write_text("process.env.FROM_DEP", newline="")
+        (tmp_path / "app.ts").write_text("process.env.FROM_APP", newline="")
         found = names(scanners.scan_tree(str(tmp_path)))
         assert found == ["FROM_APP"]
 
     def test_ignores_non_source_extensions(self, tmp_path):
-        (tmp_path / "notes.md").write_text("process.env.FROM_MD")
-        (tmp_path / "data.json").write_text('{"process.env.FROM_JSON": 1}')
+        (tmp_path / "notes.md").write_text("process.env.FROM_MD", newline="")
+        (tmp_path / "data.json").write_text('{"process.env.FROM_JSON": 1}', newline="")
         assert scanners.scan_tree(str(tmp_path)) == []
 
     def test_reads_go_and_rs_besides_py(self, tmp_path):
-        (tmp_path / "main.go").write_text('os.Getenv("GO_VAR")')
-        (tmp_path / "lib.rs").write_text('env::var("RS_VAR")?;')
+        (tmp_path / "main.go").write_text('os.Getenv("GO_VAR")', newline="")
+        (tmp_path / "lib.rs").write_text('env::var("RS_VAR")?;', newline="")
         assert sorted(names(scanners.scan_tree(str(tmp_path)))) == ["GO_VAR", "RS_VAR"]

@@ -7,16 +7,16 @@ from envlinter.cli import main
 
 @pytest.fixture
 def sample(tmp_path):
-    (tmp_path / ".env").write_text("USED=1\nSTALE=2\n", encoding="utf-8")
+    (tmp_path / ".env").write_text("USED=1\nSTALE=2\n", encoding="utf-8", newline="")
     (tmp_path / "app.py").write_text(
-        'import os\nos.environ["USED"]\nos.environ["MISSING"]\n', encoding="utf-8"
+        'import os\nos.environ["USED"]\nos.environ["MISSING"]\n', encoding="utf-8", newline=""
     )
     return str(tmp_path)
 
 
 def test_clean_project_exits_zero(tmp_path, capsys):
-    (tmp_path / ".env").write_text("A=1\n", encoding="utf-8")
-    (tmp_path / "app.py").write_text('os.environ["A"]\n', encoding="utf-8")
+    (tmp_path / ".env").write_text("A=1\n", encoding="utf-8", newline="")
+    (tmp_path / "app.py").write_text('os.environ["A"]\n', encoding="utf-8", newline="")
     assert main([str(tmp_path)]) == 0
     assert capsys.readouterr().out.strip() == ""
 
@@ -48,12 +48,12 @@ def test_compact_output(sample, capsys):
 
 
 def test_ignore_flag_silences_a_variable(tmp_path, capsys):
-    (tmp_path / "app.py").write_text('os.environ["NOISY"]\n', encoding="utf-8")
+    (tmp_path / "app.py").write_text('os.environ["NOISY"]\n', encoding="utf-8", newline="")
     assert main([str(tmp_path), "--ignore", "NOISY"]) == 0
 
 
 def test_enable_flag_narrows_rules(tmp_path, capsys):
-    (tmp_path / ".env").write_text("A=1\n", encoding="utf-8")
+    (tmp_path / ".env").write_text("A=1\n", encoding="utf-8", newline="")
     main([str(tmp_path), "--enable", "ENV006"])
     assert "ENV005" not in capsys.readouterr().out
 

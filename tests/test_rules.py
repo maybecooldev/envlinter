@@ -10,7 +10,7 @@ def project(tmp_path, files):
     for name, content in files.items():
         path = tmp_path / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
+        path.write_text(content, encoding="utf-8", newline="")
     return str(tmp_path)
 
 
@@ -182,7 +182,8 @@ class TestParserUnits:
         path = tmp_path / "docker-compose.yml"
         path.write_text(
             "services:\n  a:\n    environment:\n      - ONE\n      - TWO=2\n"
-            "  b:\n    environment:\n      THREE: three\n      FOUR:\n"
+            "  b:\n    environment:\n      THREE: three\n      FOUR:\n",
+            newline="",
         )
         parsed = compose.load(str(path))
         assert parsed.names() == {"ONE", "TWO", "THREE", "FOUR"}
@@ -192,7 +193,7 @@ class TestParserUnits:
 
     def test_entry_records_its_source_file(self, tmp_path):
         path = tmp_path / ".env"
-        path.write_text("A=1\n")
+        path.write_text("A=1\n", newline="")
         (entry,) = dotenv.parse(str(path)).entries
         assert entry.source == str(path)
 
